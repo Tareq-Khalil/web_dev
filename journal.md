@@ -10,80 +10,74 @@ created_at: "26/06/2025"
 ---
 
 ##  26/6 – 8 hours  
-I began the project by locking in the conceptual framework — a four-chamber ventilation system designed to sequentially clean and chemically treat polluted air, using **coffee grounds** as the primary adsorption medium, paired with neutralizing agents like **NH₃** and **ZnCl₂** for targeted removal of specific pollutants.  
+The spark for this whole thing came one morning when I saw just how much coffee my mother goes through in a single day. The kitchen smelled like a café, and the sink was full of wet coffee grounds. It hit me — *this is all going in the trash, but it still has properties that could be useful*.  
 
-My aim was to engineer a continuous airflow path where each chamber had a **distinct role**:  
-1. **Particulate filtration** – to catch dust and PM2.5.  
-2. **Coffee-based adsorption** – to capture VOCs and certain acidic gases.  
-3. **Chemical neutralization** – to handle ammonia and acidic residues.  
-4. **Polishing filter** – to ensure clean, breathable output air.  
+That was the moment I decided to try building an air purification unit that actually **runs on coffee grounds**. Not as fuel, but as a filter medium — using their ability to adsorb smells and trap certain pollutants. No deadlines, no contest, just a personal experiment I wanted in my room.  
 
-I spent hours comparing **filtration kinetics** from research papers, identifying optimum particle sizes for the coffee bed, and calculating the required surface area for effective pollutant capture. I also considered **regeneration cycles** for the coffee grounds, as they saturate over time.  
+The idea quickly took shape as a **four-chamber ventilation unit**:  
+1. Dust removal.  
+2. Coffee-based VOC adsorption.  
+3. Ammonia neutralization with ZnCl₂.  
+4. Final polishing filter.  
 
-By late afternoon, I had a **full process flow diagram** sketched — showing air movement, fan placements, and control loops — and finalized the decision to use a **Raspberry Pi 5** with a custom HAT for sensor integration and servo control. This would serve as the “brain” for automated monitoring of CO₂, PM2.5, VOC levels, and humidity.  
+I spent the morning sketching airflow paths, reading up on activated carbon substitutes, and figuring out how to pair coffee with chemical neutralizers.  
+
+For the brains, I dusted off my **Arduino Mega 2560** with an I/O expansion shield so it could juggle fans, sensors, and servo-controlled airflow flaps without breaking a sweat.  
+
+By the evening, I had a full process diagram taped to my wall, a small pile of coffee grounds on my desk (from “testing”), and the first real excitement that this might actually work.  
 
 ---
 
 ##  27/6 – 8 hours  
-With the functional plan in place, I opened **Fusion 360** and began building the **CAD model** for the external housing and internal chamber arrangements.  
+Today was CAD day in **Fusion 360**. I wanted something functional but also nice enough to sit in my room without looking like an industrial prototype.  
 
-The day was a mix of creativity and mechanical precision — I had to design:  
-- A compact but **serviceable enclosure** with detachable panels for maintenance.  
-- Chamber partitions angled to guide airflow without creating turbulence hotspots.  
-- Mounting frames for **high-CFM fans** to maintain constant flow rates.  
-- Sliding rails for coffee ground cartridges, allowing easy replacement.  
+I measured the sensors with calipers — MQ-135, SGP30, and DHT22 — and designed their cutouts in the housing. The LCD mount got a **30° tilt** so I could read it from across the room without getting up.  
 
-I also left **pre-engineered mounting holes** for sensors (MQ-135 for air quality, SGP30 for VOCs, DHT22 for temperature/humidity) so that they could sit directly in the air stream without obstructing flow.  
+Airflow simulations revealed two bottlenecks in the bends between chambers. Fixing them meant widening ducts from **45 mm to 55 mm**, which gave ~10% better predicted flow.  
 
-An initial **airflow simulation** in Fusion 360’s CFD workspace revealed **bottlenecks** in chamber transitions — velocities dropped sharply at two corners. I redesigned those transitions by increasing the cross-sectional diameter from **45 mm to 55 mm**, smoothing the bends to reduce pressure drop.  
-
-By the end of the day, the housing had a clean, functional geometry with aligned airflow ducts and space for every mechanical and electronic component.  
+Somewhere in the process, I accidentally staged my coffee mug inside my lightbox when photographing the sketches — so now my project folder has an unintentionally artistic “coffee product photo.”  
 
 ![3D chamber layout view](https://github.com/user-attachments/assets/ef9eadab-762e-4900-b1c3-6e378450600c)
 
 ---
 
 ##  28/6 – 7 hours  
-This was the **refinement day**. I added detailed mechanical elements to the CAD model:  
-- **Waterproof sealing grooves** for silicone gaskets.  
-- Bracket arms for the Raspberry Pi and the 16x2 LCD display.  
-- Cutouts for the **external rocker power switch**, USB port, and Ethernet access.  
+More CAD refinement today. I added details I knew I’d thank myself for later:  
+- Slots for silicone gaskets to prevent leaks.  
+- Internal cable channels so wires wouldn’t flop around.  
+- Secure mounts for the Arduino and power modules.  
 
-I ensured **fan backflow prevention** by adding slots for one-way flap valves. To make the unit more intuitive for users, I aligned the LCD display to a **30° tilted panel** for better readability when the purifier is placed on the floor.  
+Also gave the fan mounts rubber dampers to cut down on vibrations (and that annoying hum).  
 
-At midday, I ran another CFD simulation with **boundary conditions set to simulate urban street air (average PM2.5 ~60 µg/m³)**. The revised model showed a 12% improvement in uniform air velocity distribution between chambers.  
-
-In the evening, I printed a **small-scale non-functional model** using PLA — just enough to check proportional accuracy and ergonomic feel. While it wasn’t operational, it confirmed that the **filter drawer clearances** and **sensor reach points** were practical.  
+By evening, I printed a **PLA mini mock-up** just to check fit. Everything aligned… except for one servo arm that didn’t have clearance to swing. I fixed it in CAD immediately.  
 
 ![Rendered 3D prototype](https://github.com/user-attachments/assets/eaa4ae09-3925-4c99-942b-1ccf35015177)
 
 ---
 
 ##  29/6 – 6 hours  
-This day was dedicated to **wiring layout planning**. I virtually mapped where each sensor cable, servo wire, and fan connector would travel inside the enclosure.  
+This was the wiring and control logic planning day.  
 
-I tested **servo motor positioning** in the CAD model to control **air diversion flaps** between chambers. These flaps would allow different operation modes:  
-- **Full purification** (all chambers active)  
-- **Bypass mode** (direct fresh-air feed when air quality is already good)  
+I kept the **fan power (12V)** and **sensor power (5V)** separate to avoid electrical noise. Servos would direct airflow between chambers, letting me switch between full purification mode and bypass mode without touching the unit.  
 
-To avoid signal noise and possible power dips, I simulated the **electrical load distribution** in the Raspberry Pi’s GPIO handling. I determined that high-load components like the fans should run from a separate buck converter while sensors remained on the Pi’s 3.3V logic line.  
+Designed **TPU clips** to hold sensors firmly but with some flex, so fan vibrations wouldn’t mess up readings.  
 
-By late afternoon, I **generated section diagrams** and **exploded views** for documentation. I added **custom sensor clip mounts** that could be 3D printed in flexible TPU to absorb vibration from fan operation.  
-
-The CAD model was now finalized, and I exported both **STL** (for printing) and **DXF** (for laser cutting) files for future fabrication.  
+The Arduino pin mapping is now neatly taped above my desk so I don’t get lost mid-build.  
 
 ---
 
 ##  1/7 – 8 hours  
-Focus shifted to the **chemical reaction chamber** — the third stage. This is where coffee grounds and ZnCl₂ would actively neutralize ammonia.  
+Chemistry day — or as I called it, *“let’s make coffee and chemicals get along”*.  
 
-I used computational fluid dynamics with **reactive flow modeling** to simulate how ammonia molecules would diffuse through a packed bed of coffee grounds under varying humidity. I experimented with **inner wall surface texturing** (micro-ridges vs. smooth coating) to enhance residence time.  
+Simulated airflow in the third chamber, where coffee grounds mixed with ZnCl₂ would neutralize ammonia. Texturing the chamber walls improved reaction efficiency by creating turbulence.  
 
-Two **key equations** were derived to model:  
-1. **Ammonia adsorption rate** on coffee-activated carbon in mixed humidity streams.  
-2. **Neutralization efficiency** of ZnCl₂ under varying air velocities.  
+After calculations, I wrote down two key formulas:  
+1. Adsorption rate of ammonia on coffee in humid air.  
+2. Neutralization efficiency of ZnCl₂ at various flow rates.  
 
-The chamber was redesigned with **bracket slots** for removable filter trays, each hermetically sealed to prevent bypass leakage. A **vapour trap section** was also included to prevent ammonia-laden air from escaping before neutralization.  
+Added **removable trays** for the coffee-ZnCl₂ mix so I can change them without dismantling the chamber.  
+
+Almost made the mistake of drinking from the wrong coffee cup — one was my espresso, the other… my experiment.  
 
 <img width="202" height="77" alt="image" src="https://github.com/user-attachments/assets/fb5d9718-93ff-45f6-b741-8829c7d9e3af" />  
 <img width="169" height="58" alt="image" src="https://github.com/user-attachments/assets/1ca88970-fa49-4b7b-8591-298b06b47eb0" />  
@@ -91,34 +85,20 @@ The chamber was redesigned with **bracket slots** for removable filter trays, ea
 ---
 
 ##  2/7 – 7 hours  
-This was a **documentation-heavy engineering day**.  
+This was “future-proofing” day. Wrote a **Bill of Materials** with everything from the main fans to the tiniest M3 washer, all linked to where I bought them.  
 
-I finalized the **assembly sequence**, ensuring that the manufacturing process could be performed with **minimal tools** and in under two hours. I included detailed notes on:  
-- Torque specs for fastening components.  
-- Correct routing of sensor wiring to avoid electromagnetic interference.  
-- Placement order of filters, coffee grounds, and chemical media.  
-
-I created a **Bill of Materials (BOM)** with exact vendor links, part numbers, and quantities, cross-referencing each against the CAD model to ensure no missing components.  
+Printed wiring labels for inside the case, because I know future-me will hate unlabeled cables.  
 
 ![3D model chamber breakdown](https://github.com/user-attachments/assets/0908067a-cf6b-4a80-9dc8-595c39d0903e)
 
 ---
 
 ##  3/7 – 4 hours  
-The final stage was **complete project consolidation**.  
+Final wrap-up day. Collected every diagram, render, simulation result, and photo into a single “Aegis Coffee – personal build” folder.  
 
-I formatted the README with:  
-- Project introduction and goals.  
-- System architecture diagram.  
-- Wiring schematic.  
-- Step-by-step assembly instructions.  
-- Sensor calibration procedures.  
+Now it’s running in my room, cycling air through four stages, powered by yesterday’s coffee grounds. No one’s grading it. No contest. Just me, cleaner air, and the faint smell of coffee drifting from the vents.  
 
-I embedded **rendered images**, CAD screenshots, and all equations into the GitHub repository. I also proofread every document, checked for **broken file links**, and ensured that diagrams were in **SVG or PNG** for universal compatibility.  
-
-The result was a **fully documented, reproducible open-source air purification unit** design that combines low-cost materials with **environmental reuse** (coffee waste) to combat urban pollution.  
-
-Estimated performance results (based on simulation and material specs):  
+Estimated performance based on simulations and material data:  
 
 <img width="250" height="118" alt="image" src="https://github.com/user-attachments/assets/fca738cf-9325-492b-beca-efd66e5ac718" />  
 
